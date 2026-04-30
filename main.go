@@ -7,6 +7,7 @@ import (
 
 	_			"modernc.org/sqlite"
 	database	"github.com/genus555/InventoryManager/internal/database"
+	cli			"github.com/genus555/InventoryManager/internal/cli"
 )
 
 func main() {
@@ -19,4 +20,22 @@ func main() {
 
 	db := database.NewDB(db_file)
 	fmt.Println(db)
+
+	cli.PrintCommands()
+	
+	for {
+		inputs := cli.GetInput()
+		if len(inputs) == 0 {
+			continue
+		}
+		switch inputs[0] {
+		case "help":
+			cli.PrintCommands()
+		case "quit":
+			fmt.Println("Closing Inventory Manager")
+			return
+		default:
+			fmt.Printf("\"%s\" is not a valid command\n", inputs[0])
+		}
+	}
 }
