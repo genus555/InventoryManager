@@ -19,7 +19,17 @@ func GetInput() []string {
 }
 
 func PrintCommands() {
-	fmt.Println("List of available commands:")
-	fmt.Println("	*help:\n	     Shows available commands\n	     Usage: help")
-	fmt.Println("	*quit:\n	     Stops the program\n	     Usage: quit")
+	fmt.Println(`List of available commands:
+	*new: Creates a new category in database.
+	   Usage: new [category_name]
+	*list: Lists categories or entries in a category
+	   - categories: Default option or with flag
+	        Usage: List -categories (or '-c')
+	   - category entries: currently open category or with flag and [category_name]
+	        Usage: List -entries (or '-e') [category_name]
+	*help: Shows available commands
+	   Usage: help
+	*quit: Stops the program
+	   Usage: quit
+	`)
 }

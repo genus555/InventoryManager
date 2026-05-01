@@ -19,7 +19,7 @@ func main() {
 	defer db_file.Close()
 
 	db := database.NewDB(db_file)
-	fmt.Println(db)
+	fmt.Println(db.TableName)
 
 	cli.PrintCommands()
 	
@@ -29,8 +29,22 @@ func main() {
 			continue
 		}
 		switch inputs[0] {
+		case "list":
+			fallthrough
+		case "l":
+			err := HandleList(db, inputs)
+			if err != nil {fmt.Println(err)}
+		case "new":
+			fallthrough
+		case "n":
+			err := HandleCreateTable(db, inputs)
+			if err != nil {fmt.Println(err)}
+		case "h":
+			fallthrough
 		case "help":
 			cli.PrintCommands()
+		case "q":
+			fallthrough
 		case "quit":
 			fmt.Println("Closing Inventory Manager")
 			return

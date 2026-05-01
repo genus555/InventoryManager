@@ -8,11 +8,13 @@ import (
 
 type DB struct {
 	database	*sql.DB
+	TableName	string
 }
 
 func NewDB(db *sql.DB) *DB {
 	database := DB{
 		database:	db,
+		TableName:	"",
 	}
 	return &database
 }
