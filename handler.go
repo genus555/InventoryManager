@@ -48,5 +48,21 @@ func HandleOpen(db *database.DB, inputs []string) error {
 }
 
 func HandleCreateEntry(db *database.DB, inputs []string) error {
+	if db.TableName == "" {return fmt.Errorf("No category is currently open.")}
+	if len(inputs) < 2 {
+		return fmt.Errorf("Incorrect usage. Usage: add [entry_name]")
+	}
+	err := db.AddEntry(inputs[1])
+	if err != nil {return err}
+	return nil
+}
+
+func HandleDeleteEntry(db *database.DB, inputs []string) error {
+	if db.TableName == "" {return fmt.Errorf("No category is currently open.")}
+	if len(inputs) < 2 {
+		return fmt.Errorf("Incorrect usage. Usage: delete [entry_name]")
+	}
+	err := db.DeleteEntry(inputs[1])
+	if err != nil {return err}
 	return nil
 }

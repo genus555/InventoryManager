@@ -29,6 +29,10 @@ func PrintCommands() {
 	        Usage: List -entries (or '-e') [category_name]
 	*open: Opens a category
 	   Usage: open [category_name]
+	*add: Adds an entry to the currently open category
+	   Usage: add [entry_name]
+	*delete: Deletes an entry from the current open category
+	   Usage: delete [entry_name]
 	*help: Shows available commands
 	   Usage: help
 	*quit: Stops the program

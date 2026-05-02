@@ -68,8 +68,39 @@ func (db *DB) CheckTable(tableName string) (string, error) {
 
 func (db *DB) GetAmount(tableName, item string) (int, error) {
 	var amount int
-	query := fmt.Sprintf("SELECT amount FROM %s WHERE name = ?", tableName).Scan(&amount)
-	err := db.database.QueryRow(query, item)
+	query := fmt.Sprintf("SELECT amount FROM %s WHERE name = ?", tableName)
+	err := db.database.QueryRow(query, item).Scan(&amount)
 	if err == sql.ErrNoRows {return 0, fmt.Errorf("Item \"%s\" in category \"%s\" doesn't exist.", item, tableName)} else if err != nil {return 0, err}
 	return amount, nil
+}
+
+func (db *DB) AddEntry(entry string) error {
+	var exists string
+	query := fmt.Sprintf("SELECT name FROM %s WHERE name = ?", db.TableName)
+	if err := db.database.QueryRow(query, entry).Scan(&exists); err == nil {
+		return fmt.Errorf("Entry \"%s\" already exists in category \"%s\".", entry, db.TableName)
+	}
+
+	query = fmt.Sprintf("INSERT INTO %s (name) VALUES (?)", db.TableName)
+	_, err := db.database.Exec(query, entry)
+	if err != nil {return err}
+	return nil
+}
+
+func (db *DB) DeleteEntry(entry string) error {
+	var exists string
+	query := fmt.Sprintf("SELECT name FROM %s WHERE name = ?", db.TableName)
+	if err := db.database.QueryRow(query, entry).Scan(&exists); err != nil {
+		if err == sql.ErrNoRows{
+			return fmt.Errorf("Entry \"%s\" doesn't exists in category \"%s\".", entry, db.TableName)
+		}
+		return err
+	}
+
+	query = fmt.Sprintf("DELETE FROM %s WHERE name = ?", db.TableName)
+	_, err := db.database.Exec(query, entry)
+	if err != nil {return err}
+
+	fmt.Printf("Entry \"%s\" has been deleted from category \"%s\".\n", entry, db.TableName)
+	return nil
 }

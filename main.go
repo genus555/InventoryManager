@@ -44,6 +44,16 @@ func main() {
 		case "o":
 			err := HandleOpen(db, inputs)
 			if err != nil {fmt.Println(err)}
+		case "add":
+			fallthrough
+		case "a":
+			err := HandleCreateEntry(db, inputs)
+			if err != nil {fmt.Println(err)}
+		case "delete":
+			fallthrough
+		case "d":
+			err := HandleDeleteEntry(db, inputs)
+			if err != nil {fmt.Println(err)}
 		case "h":
 			fallthrough
 		case "help":
