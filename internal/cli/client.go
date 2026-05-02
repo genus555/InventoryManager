@@ -27,6 +27,8 @@ func PrintCommands() {
 	        Usage: List -categories (or '-c')
 	   - category entries: currently open category or with flag and [category_name]
 	        Usage: List -entries (or '-e') [category_name]
+	*open: Opens a category
+	   Usage: open [category_name]
 	*help: Shows available commands
 	   Usage: help
 	*quit: Stops the program

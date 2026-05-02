@@ -39,6 +39,11 @@ func main() {
 		case "n":
 			err := HandleCreateTable(db, inputs)
 			if err != nil {fmt.Println(err)}
+		case "open":
+			fallthrough
+		case "o":
+			err := HandleOpen(db, inputs)
+			if err != nil {fmt.Println(err)}
 		case "h":
 			fallthrough
 		case "help":
