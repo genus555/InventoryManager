@@ -86,6 +86,40 @@ func (db *DB) GetAmount(tableName, item string) (int, error) {
 	return amount, nil
 }
 
+func (db *DB) GetLow() error {
+	query := fmt.Sprintf("SELECT name FROM %s WHERE amount <= ? AND amount > 0", db.TableName)
+	entries, err := db.database.Query(query, LOW)
+	if err != nil {return err}
+	defer entries.Close()
+
+	fmt.Printf("Low stock items(%d) in %s:\n", LOW, db.TableName)
+	for entries.Next() {
+		var entry string
+		if err := entries.Scan(&entry); err != nil {return err}
+		fmt.Printf("    - %s\n", entry)
+	}
+
+	if err := entries.Err(); err != nil {return err}
+	return nil
+}
+
+func (db *DB) GetEmpty() error {
+	query := fmt.Sprintf("SELECT name FROM %s WHERE amount = 0", db.TableName)
+	entries, err := db.database.Query(query)
+	if err != nil {return err}
+	defer entries.Close()
+
+	fmt.Printf("Out of stock items in %s:\n", db.TableName)
+	for entries.Next() {
+		var entry string
+		if err := entries.Scan(&entry); err != nil {return err}
+		fmt.Printf("    - %s\n", entry)
+	}
+
+	if err := entries.Err(); err != nil {return err}
+	return nil
+}
+
 func (db *DB) AddEntry(entry string) error {
 	var exists string
 	query := fmt.Sprintf("SELECT name FROM %s WHERE name = ?", db.TableName)

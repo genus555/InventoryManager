@@ -16,6 +16,10 @@ const (
 	MINUS = false
 )
 
+const (
+	LOW = 1
+)
+
 func NewDB(db *sql.DB) *DB {
 	database := DB{
 		database:	db,

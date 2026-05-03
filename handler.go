@@ -75,7 +75,7 @@ func HandleDeleteEntry(db *database.DB, inputs []string) error {
 			return nil
 		}
 	}
-	
+
 	if db.TableName == "" {return fmt.Errorf("No category is currently open.")}
 	err := db.DeleteEntry(inputs[1])
 	if err != nil {return err}
@@ -120,5 +120,20 @@ func HandleGetEntry(db *database.DB, inputs []string) error {
 	if err != nil {return err}
 
 	fmt.Printf("%s \"%s\": %d\n", db.TableName, inputs[1], amount)
+	return nil
+}
+
+func HandleCheckRestock(db *database.DB, inputs []string) error {
+	if db.TableName == "" {return fmt.Errorf("No category is currently open.")}
+	if len(inputs) == 1 {
+		if err := db.GetLow(); err != nil {return err}
+		if err := db.GetEmpty(); err != nil {return err}
+	}else if inputs[1] == "-l" || inputs[1] == "-low" {
+		if err := db.GetLow(); err != nil {return err}
+	} else if inputs[1] == "-e" || inputs[1] == "-empty" {
+		if err := db.GetEmpty(); err != nil {return err}
+	} else {
+		return fmt.Errorf("Incorrect usage. Usage: restock (optional flags -empty/-low)")
+	}
 	return nil
 }

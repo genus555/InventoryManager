@@ -31,7 +31,7 @@ func main() {
 		switch inputs[0] {
 		case "list":
 			fallthrough
-		case "l":
+		case "ls":
 			err := HandleList(db, inputs)
 			if err != nil {fmt.Println(err)}
 		case "new":
@@ -72,6 +72,11 @@ func main() {
 			fallthrough
 		case "m":
 			err := HandlePlusMinus(db, inputs)
+			if err != nil {fmt.Println(err)}
+		case "restock":
+			fallthrough
+		case "re":
+			err := HandleCheckRestock(db, inputs)
 			if err != nil {fmt.Println(err)}
 		case "h":
 			fallthrough
