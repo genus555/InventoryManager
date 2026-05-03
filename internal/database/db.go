@@ -38,6 +38,18 @@ func (db *DB) ListTables() error {
 	return nil
 }
 
+func (db *DB) DeleteTable(tableName string) error {
+	_, err := db.CheckTable(tableName)
+	if err != nil {return err}
+
+	query := fmt.Sprintf("DROP TABLE %s", tableName)
+	_, err = db.database.Exec(query)
+	if err != nil {return err}
+
+	fmt.Printf("Category \"%s\" has been deleted.\n", tableName)
+	return nil
+}
+
 func (db *DB) ListEntries(tableName string) error {
 	query := fmt.Sprintf("SELECT name FROM %s", tableName)
 	entries, err := db.database.Query(query)
@@ -129,7 +141,7 @@ func (db *DB) UpdateEntry(entry string, amount int) error {
 	_, err := db.database.Exec(query, amount, entry)
 	if err != nil {return err}
 
-	fmt.Printf("Entry \"%s\" has been updated.\n", entry)
+	fmt.Printf("%s \"%s\" has been updated.\n", db.TableName, entry)
 	return nil
 }
 

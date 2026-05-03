@@ -33,6 +33,8 @@ func PrintCommands() {
 	   Usage: add [entry_name]
 	*delete: Deletes an entry from the currently open category
 	   Usage: delete [entry_name]
+	   - delete category: deletes the category from database
+	      Usage: delete -t [category_name]
 	*get: Gets an entry from the currently open category
 	   Usage: get [entry_name]
 	*update: Updates the amount of an entry from the currently open category

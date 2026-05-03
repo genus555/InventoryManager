@@ -65,10 +65,18 @@ func HandleCreateEntry(db *database.DB, inputs []string) error {
 }
 
 func HandleDeleteEntry(db *database.DB, inputs []string) error {
-	if db.TableName == "" {return fmt.Errorf("No category is currently open.")}
 	if len(inputs) < 2 {
 		return fmt.Errorf("Incorrect usage. Usage: delete [entry_name]")
 	}
+	if len(inputs) >= 3 {
+		if inputs[1] == "-t" {
+			err := db.DeleteTable(inputs[2])
+			if err != nil {return err}
+			return nil
+		}
+	}
+	
+	if db.TableName == "" {return fmt.Errorf("No category is currently open.")}
 	err := db.DeleteEntry(inputs[1])
 	if err != nil {return err}
 	return nil
