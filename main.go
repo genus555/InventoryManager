@@ -54,6 +54,25 @@ func main() {
 		case "d":
 			err := HandleDeleteEntry(db, inputs)
 			if err != nil {fmt.Println(err)}
+		case "get":
+			fallthrough
+		case "g":
+			err := HandleGetEntry(db, inputs)
+			if err != nil {fmt.Println(err)}
+		case "update":
+			fallthrough
+		case "u":
+			err := HandleUpdateEntry(db, inputs)
+			if err != nil {fmt.Println(err)}
+		case "plus":
+			fallthrough
+		case "p":
+			fallthrough
+		case "minus":
+			fallthrough
+		case "m":
+			err := HandlePlusMinus(db, inputs)
+			if err != nil {fmt.Println(err)}
 		case "h":
 			fallthrough
 		case "help":

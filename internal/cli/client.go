@@ -31,8 +31,14 @@ func PrintCommands() {
 	   Usage: open [category_name]
 	*add: Adds an entry to the currently open category
 	   Usage: add [entry_name]
-	*delete: Deletes an entry from the current open category
+	*delete: Deletes an entry from the currently open category
 	   Usage: delete [entry_name]
+	*get: Gets an entry from the currently open category
+	   Usage: get [entry_name]
+	*update: Updates the amount of an entry from the currently open category
+	   Usage: update [entry_name] [new_amount]
+	*plus/minus: Adds or subtracts 1 amount from an entry from the currently open category
+	   Usage: plus/minus [entry_name]
 	*help: Shows available commands
 	   Usage: help
 	*quit: Stops the program

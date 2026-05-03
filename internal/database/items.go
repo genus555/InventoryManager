@@ -11,6 +11,11 @@ type DB struct {
 	TableName	string
 }
 
+const (
+	PLUS = true
+	MINUS = false
+)
+
 func NewDB(db *sql.DB) *DB {
 	database := DB{
 		database:	db,

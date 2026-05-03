@@ -104,3 +104,46 @@ func (db *DB) DeleteEntry(entry string) error {
 	fmt.Printf("Entry \"%s\" has been deleted from category \"%s\".\n", entry, db.TableName)
 	return nil
 }
+
+func (db *DB) GetEntry(entry string) (int, error) {
+	var amount int
+	query := fmt.Sprintf("SELECT amount FROM %s WHERE name = ?", db.TableName)
+	err := db.database.QueryRow(query, entry).Scan(&amount)
+	if err == sql.ErrNoRows {
+		return 0, fmt.Errorf("\"%s\" in \"%s\" doesn't exist.", entry, db.TableName)
+	} else if err != nil {return 0, err}
+	return amount, nil
+}
+
+func (db *DB) UpdateEntry(entry string, amount int) error {
+	var exists string
+	query := fmt.Sprintf("SELECT name FROM %s WHERE name = ?", db.TableName)
+	if err := db.database.QueryRow(query, entry).Scan(&exists); err != nil {
+		if err == sql.ErrNoRows{
+			return fmt.Errorf("Entry \"%s\" doesn't exists in category \"%s\".", entry, db.TableName)
+		}
+		return err
+	}
+
+	query = fmt.Sprintf("UPDATE %s SET amount = ? WHERE name = ?", db.TableName)
+	_, err := db.database.Exec(query, amount, entry)
+	if err != nil {return err}
+
+	fmt.Printf("Entry \"%s\" has been updated.\n", entry)
+	return nil
+}
+
+func (db *DB) PlusMinus(entry string, PM bool) error {
+	initial_amount, err := db.GetEntry(entry)
+	if err != nil {return err}
+
+	amount := initial_amount
+	if PM {amount += 1} else {amount -= 1}
+
+	query := fmt.Sprintf("UPDATE %s SET amount = ? WHERE name = ?", db.TableName)
+	_, err = db.database.Exec(query, amount, entry)
+	if err != nil {return err}
+
+	fmt.Printf("Entry \"%s\" in %s has been updated: %d --> %d\n", entry, db.TableName, initial_amount, amount)
+	return nil
+}

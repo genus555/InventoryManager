@@ -2,9 +2,16 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	database	"github.com/genus555/InventoryManager/internal/database"
 )
+
+func strToInt(num string) (int, error) {
+	convNum, err := strconv.Atoi(num)
+	if err != nil {return 0, err}
+	return convNum, nil
+}
 
 func HandleCreateTable(db *database.DB, inputs []string) error {
 	if len(inputs) < 2 {
@@ -64,5 +71,46 @@ func HandleDeleteEntry(db *database.DB, inputs []string) error {
 	}
 	err := db.DeleteEntry(inputs[1])
 	if err != nil {return err}
+	return nil
+}
+
+func HandleUpdateEntry(db *database.DB, inputs []string) error {
+	if db.TableName == "" {return fmt.Errorf("No category is currently open.")}
+	if len(inputs) < 3 {
+		return fmt.Errorf("Incorrect usage. Usage: update [entry_name] [amount]")
+	}
+	num, err := strToInt(inputs[2])
+	if err != nil {return err}
+	err = db.UpdateEntry(inputs[1], num)
+	if err != nil {return err}
+	return nil
+}
+
+func HandlePlusMinus(db *database.DB, inputs []string) error {
+	if db.TableName == "" {return fmt.Errorf("No category is currently open.")}
+	if len(inputs) < 2 {
+		return fmt.Errorf("Incorrect usage. Usage: plus/minus [entry_name]")
+	}
+	if inputs[0] == "plus" || inputs[0] == "p" {
+		db.PlusMinus(inputs[1], database.PLUS)
+		return nil
+	}
+	if inputs[0] == "minus" || inputs[0] == "m" {
+		db.PlusMinus(inputs[1], database.MINUS)
+		return nil
+	}
+	return fmt.Errorf("Something wrong has happened with Plus Minus")
+}
+
+func HandleGetEntry(db *database.DB, inputs []string) error {
+	if db.TableName == "" {return fmt.Errorf("No category is currently open.")}
+	if len(inputs) < 2 {
+		return fmt.Errorf("Incorrect usage. Usage: get [entry_name]")
+	}
+
+	amount, err := db.GetEntry(inputs[1])
+	if err != nil {return err}
+
+	fmt.Printf("%s \"%s\": %d\n", db.TableName, inputs[1], amount)
 	return nil
 }
