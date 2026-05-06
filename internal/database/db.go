@@ -121,60 +121,66 @@ func (db *DB) GetEmpty() error {
 }
 
 func (db *DB) AddEntry(entry string) error {
+	_, cached := db.checkCache(entry)
+	if cached {
+		return fmt.Errorf("Entry \"%s\" already exists in category \"%s\".", entry, db.TableName)
+	}
 	var exists string
 	query := fmt.Sprintf("SELECT name FROM %s WHERE name = ?", db.TableName)
 	if err := db.database.QueryRow(query, entry).Scan(&exists); err == nil {
+		db.addToCache(entry, DEFAULTAMOUNT)
 		return fmt.Errorf("Entry \"%s\" already exists in category \"%s\".", entry, db.TableName)
 	}
 
 	query = fmt.Sprintf("INSERT INTO %s (name) VALUES (?)", db.TableName)
 	_, err := db.database.Exec(query, entry)
 	if err != nil {return err}
+	db.addToCache(entry, DEFAULTAMOUNT)
 	return nil
 }
 
 func (db *DB) DeleteEntry(entry string) error {
-	var exists string
-	query := fmt.Sprintf("SELECT name FROM %s WHERE name = ?", db.TableName)
-	if err := db.database.QueryRow(query, entry).Scan(&exists); err != nil {
-		if err == sql.ErrNoRows{
-			return fmt.Errorf("Entry \"%s\" doesn't exists in category \"%s\".", entry, db.TableName)
-		}
-		return err
-	}
-
-	query = fmt.Sprintf("DELETE FROM %s WHERE name = ?", db.TableName)
-	_, err := db.database.Exec(query, entry)
+	query := fmt.Sprintf("DELETE FROM %s WHERE name = ?", db.TableName)
+	result, err := db.database.Exec(query, entry)
 	if err != nil {return err}
 
+	count, err := result.RowsAffected()
+	if err != nil {return err}
+	if count == 0 {
+		return fmt.Errorf("Entry \"%s\" doesn't exists in category \"%s\".", entry, db.TableName)
+	}
+
+	db.deleteEntryFromCache(entry)
 	fmt.Printf("Entry \"%s\" has been deleted from category \"%s\".\n", entry, db.TableName)
 	return nil
 }
 
 func (db *DB) GetEntry(entry string) (int, error) {
-	var amount int
+	amount, cached := db.checkCache(entry)
+	if cached {
+		return amount, nil
+	}
 	query := fmt.Sprintf("SELECT amount FROM %s WHERE name = ?", db.TableName)
 	err := db.database.QueryRow(query, entry).Scan(&amount)
 	if err == sql.ErrNoRows {
 		return 0, fmt.Errorf("\"%s\" in \"%s\" doesn't exist.", entry, db.TableName)
 	} else if err != nil {return 0, err}
+	db.addToCache(entry, amount)
 	return amount, nil
 }
 
 func (db *DB) UpdateEntry(entry string, amount int) error {
-	var exists string
-	query := fmt.Sprintf("SELECT name FROM %s WHERE name = ?", db.TableName)
-	if err := db.database.QueryRow(query, entry).Scan(&exists); err != nil {
-		if err == sql.ErrNoRows{
-			return fmt.Errorf("Entry \"%s\" doesn't exists in category \"%s\".", entry, db.TableName)
-		}
-		return err
-	}
-
-	query = fmt.Sprintf("UPDATE %s SET amount = ? WHERE name = ?", db.TableName)
-	_, err := db.database.Exec(query, amount, entry)
+	query := fmt.Sprintf("UPDATE %s SET amount = ? WHERE name = ?", db.TableName)
+	result, err := db.database.Exec(query, amount, entry)
 	if err != nil {return err}
 
+	count, err := result.RowsAffected()
+	if err != nil {return err}
+	if count == 0 {
+		return fmt.Errorf("Entry \"%s\" doesn't exists in category \"%s\".", entry, db.TableName)
+	}
+
+	db.addToCache(entry, amount)
 	fmt.Printf("%s \"%s\" has been updated.\n", db.TableName, entry)
 	return nil
 }
@@ -190,6 +196,12 @@ func (db *DB) PlusMinus(entry string, PM bool) error {
 	_, err = db.database.Exec(query, amount, entry)
 	if err != nil {return err}
 
+	db.addToCache(entry, amount)
 	fmt.Printf("Entry \"%s\" in %s has been updated: %d --> %d\n", entry, db.TableName, initial_amount, amount)
 	return nil
+}
+
+func (db *DB) PrintCache() {
+	fmt.Println(db.cache)
+	fmt.Println(db.cacheOrder)
 }

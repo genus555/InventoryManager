@@ -9,6 +9,8 @@ import (
 type DB struct {
 	database	*sql.DB
 	TableName	string
+	cache		map[string]int
+	cacheOrder	[]string
 }
 
 const (
@@ -18,12 +20,14 @@ const (
 
 const (
 	LOW = 1
+	DEFAULTAMOUNT = 0
 )
 
 func NewDB(db *sql.DB) *DB {
-	database := DB{
+	return &DB{
 		database:	db,
 		TableName:	"",
+		cache:		make(map[string]int),
+		cacheOrder:	[]string{},
 	}
-	return &database
 }

@@ -90,5 +90,7 @@ func main() {
 		default:
 			fmt.Printf("\"%s\" is not a valid command\n", inputs[0])
 		}
+		fmt.Println("CACHE CHECK:")
+		db.PrintCache()
 	}
 }
