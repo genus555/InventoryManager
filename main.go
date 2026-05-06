@@ -6,8 +6,8 @@ import (
 	"database/sql"
 
 	_			"modernc.org/sqlite"
-	database	"github.com/genus555/InventoryManager/internal/database"
-	cli			"github.com/genus555/InventoryManager/internal/cli"
+	database	"github.com/genus555/inventorymanager/internal/database"
+	cli			"github.com/genus555/inventorymanager/internal/cli"
 )
 
 func main() {

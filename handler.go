@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	database	"github.com/genus555/InventoryManager/internal/database"
+	database	"github.com/genus555/inventorymanager/internal/database"
 )
 
 func strToInt(num string) (int, error) {

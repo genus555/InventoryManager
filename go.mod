@@ -1,4 +1,4 @@
-module github.com/genus555/InventoryManager
+module github.com/genus555/inventorymanager
 
 go 1.25.1
 
