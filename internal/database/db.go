@@ -200,8 +200,3 @@ func (db *DB) PlusMinus(entry string, PM bool) error {
 	fmt.Printf("Entry \"%s\" in %s has been updated: %d --> %d\n", entry, db.TableName, initial_amount, amount)
 	return nil
 }
-
-func (db *DB) PrintCache() {
-	fmt.Println(db.cache)
-	fmt.Println(db.cacheOrder)
-}
